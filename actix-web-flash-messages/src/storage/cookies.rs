@@ -25,6 +25,7 @@ pub struct CookieMessageStore {
     same_site: SameSite,
     http_only: bool,
     path: String,
+    domain: String,
 }
 
 /// A fluent builder to construct a [`CookieMessageStore`] instance.
@@ -36,6 +37,7 @@ pub struct CookieMessageStoreBuilder {
     same_site: Option<SameSite>,
     http_only: Option<bool>,
     path: Option<String>,
+    domain: Option<String>,
 }
 
 impl CookieMessageStore {
@@ -53,6 +55,7 @@ impl CookieMessageStore {
             same_site: None,
             http_only: None,
             path: None,
+            domain: None,
         }
     }
 
@@ -90,6 +93,7 @@ impl CookieMessageStore {
                 .http_only(self.http_only)
                 .same_site(self.same_site)
                 .path(&self.path)
+                .domain(&self.domain)
                 .finish();
 
             Ok(signed_cookie)
@@ -157,6 +161,11 @@ impl CookieMessageStoreBuilder {
         self
     }
 
+    pub fn domain(mut self, domain: String) -> Self {
+        self.domain = Some(domain);
+        self
+    }
+
     /// Finalise the builder and return a [`CookieMessageStore`] instance.
     pub fn build(self) -> CookieMessageStore {
         CookieMessageStore {
@@ -167,6 +176,7 @@ impl CookieMessageStoreBuilder {
             same_site: self.same_site.unwrap_or(SameSite::Lax),
             http_only: self.http_only.unwrap_or(true),
             path: self.path.unwrap_or_else(|| "/".to_string()),
+            domain: self.domain.unwrap_or_else(|| "".to_string()),
         }
     }
 }
